@@ -1,0 +1,144 @@
+@begin:
+CLEAR 61439
+GO SUB @loadroutines
+GO SUB @loadudgs
+GO SUB @loadtrack
+LET s=0 : LET h=0
+@mainloop:
+IF s>h THEN LET h=s
+GO SUB @startscreen
+GO SUB @initgame
+@gameloop:
+# 16 track data, 4 repeats of red (2) and white (7) barriers
+FOR u=1 TO 16:FOR q=1 TO 4:FOR p=2 TO 7 STEP 5
+INK p:PAPER p
+# input check
+LET dy=(INKEY$="p")-(INKEY$="o"):IF dy<>0 THEN BEEP 0.01,24:LET cy=cy+dy
+# collision checks and scrolls * v
+FOR x=1 TO v
+IF ATTR(20,cy)>64 THEN GOTO @crash
+RANDOMIZE USR r1
+NEXT x
+# redraw car if not under bridge
+IF ATTR(22, cy)=64 THEN POKE 23232+cy, 66
+LET s=s+v:PRINT #1;AT 1,27;BRIGHT 1;PAPER 1;INK 5;s
+# musical sound shower
+IF m(n)>0 THEN BEEP 0.01,m(n)
+LET n=n+1:IF n>32 THEN LET n=1
+# clear either side
+LET y=b+(b*8):LET z=22528+ry
+POKE z-1,y:POKE z+16,y
+# draw road
+PRINT AT 0,ry+1;INK 0;PAPER 0;BRIGHT 1;"\b\b\b\b\b\b\b\b\b\b\b\b\b\b";
+# draw track split
+LET y=64+p+(p*8)
+POKE z,y:POKE z+15,y
+FOR x=t(u,4) TO 10 STEP t(u,4):POKE z+x,y:NEXT x
+# draw other car (POKE 22528+(x+32)+y=ink+(paper*8)+(bright*64))
+IF t(u,3)>0 AND p=2 AND q=4 THEN POKE z+32+t(u,2),t(u,3)+64
+RANDOMIZE USR r1
+# resolve next track direction
+LET ry=ry+t(u,1)
+NEXT p:NEXT q:NEXT u
+GO SUB @nextstage
+GOTO @gameloop
+@nextstage:
+# reset track index for filler track
+LET u=1
+GO SUB @drawbanner
+# increase velocity
+LET v=v+1
+# change background
+LET b=b+2
+IF b>7 THEN LET b=1
+LET p=7
+BORDER b
+IF b=7 THEN PRINT AT 3,ry;INK 0;PAPER 7;BRIGHT 1;"Congratulations!":PAUSE 0:GOTO @mainloop
+GO SUB @emptytrack
+RETURN
+@drawbanner:
+PRINT AT 2,ry-3;INK 7;PAPER 7;"\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+PRINT AT 3,ry-3;INK 7;PAPER 7;"\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+PRINT AT 4,ry-3;INK 7;PAPER 7;"\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+PRINT AT 5,ry-3;INK 7;PAPER 7;"\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+PRINT AT 6,ry-2;INK 5;PAPER 5;"\b";AT 6,ry+17;"\b"
+PRINT AT 7,ry-2;INK 5;PAPER 5;"\b";AT 7,ry+17;"\b"
+PRINT AT 8,ry-2;INK 5;PAPER 5;"\b";AT 8,ry+17;"\b"
+RETURN
+@emptytrack:
+PRINT AT 0,0;INK b;PAPER b;"\b\b\b\b\b\b\b\b";BRIGHT 1;"\b";INK 0; PAPER 0;"\b\b\b\b\b\b\b\b\b\b\b\b\b\b";INK b;PAPER b;"\b";BRIGHT 0;"\b\b\b\b\b\b\b\b":RETURN
+@initgame:
+# stage colour
+LET b=4
+# road position
+LET ry=8
+# car position
+LET cy=10
+# direction
+LET dy=0
+# velocity
+LET v=3
+# reset music
+LET n=1
+# reset score
+LET s=0
+INK b:PAPER b:BORDER b:CLS
+# fill screen with invisible cars
+FOR x=0 TO 21
+PRINT AT x,0;"\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+NEXT x
+PRINT #1;AT 0,0;BRIGHT 1;INK 0;PAPER 0;"\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a"
+PRINT #1;AT 1,0;BRIGHT 1;INK 0;PAPER 1;"\e\e\e\e\e\e\e\e\e\e\e ";INK 3;"CaliRun";INK 0;" \e\e\e\e\e\e\e\e\e\e\e\e"
+GO SUB @emptytrack
+FOR x=0 TO 23
+RANDOMIZE USR r1
+NEXT x
+PRINT #1;AT 1,1;BRIGHT 1;PAPER 1;INK 5;"HIGH:";h;#1;AT 1,21;BRIGHT 1;PAPER 1;INK 5;"SCORE:";s
+GO SUB @drawbanner
+RETURN
+@startscreen:
+BORDER 1:PAPER 1:INK 5:CLS
+PRINT AT 2,0;PAPER 0;INK 3;"          ";INK2;"\a";INK 3;" CaliRun ";INK 5;"\b          "
+PRINT AT 4,5;"Race across California";AT 5,5;"in your Ferrari F110";AT 6,5;"through 5 stages that";AT 7,5;"get faster and earn";AT 8,5;"you more points if you";AT 9,5;"manage not to crash!";AT 11,5;"O is Left, P is right.";AT 13,5;"PRESS ANY KEY TO START"
+PRINT #1;AT 0,9;INK 3;"HIGH SCORE ";h;#1;AT 1,9;INK 3;"LAST SCORE ";s
+INK 6
+FOR x=100 TO 10 STEP -10:PLOT (255-x)/2,8:DRAW x,0,-PI:NEXT x
+INK 0:PLOT 0,7:DRAW 255,0
+PAUSE 0
+CLS
+RETURN
+@crash:
+PRINT AT 21,cy-1;INK 6;PAPER 2;FLASH 1;BRIGHT 1;"\:'\':":PRINT #1;AT 0,cy-2;INK 3;PAPER 0;BRIGHT 1;"\d";#1;AT 0,cy-1;INK 6;PAPER 2;FLASH 1;BRIGHT 1;"\:.\.:";#1;AT 0,cy+1;INK 6;PAPER 0;BRIGHT 1;"\c":RANDOMIZE USR r2:PAUSE 0:GOTO @mainloop
+@loadtrack:
+# track data
+DIM t(16,4)
+# track index
+LET u=1
+# music data
+DIM m(32)
+# music index
+LET n=1
+RESTORE @track
+FOR x=1 TO 16:READ t(x,1):READ t(x,2):READ t(x,3):READ t(x,4):NEXT x:LET u=1
+FOR x=1 TO 32:READ m(x):NEXT x:LET n=1
+RETURN
+@track:
+# track data - direction, position of other car, other car colour, track split
+DATA 0,0,0,11
+DATA 1,7,1,5
+DATA 0,0,0,5
+DATA -1,8,3,5
+DATA 0,0,0,3
+DATA -1,9,5,6
+DATA 0,0,0,6
+DATA 1,8,6,6
+DATA 0,0,0,3
+DATA 1,3,1,9
+DATA 0,7,3,5
+DATA -1,3,5,9
+DATA 0,0,0,3
+DATA -1,8,6,5
+DATA 0,7,1,5
+DATA 1,0,0,5
+# music data
+DATA 12,0,16,9,0,12,0,11,0,14,0,14,7,0,11,0,12,0,16,9,0,12,0,11,0,0,0,0,0,0,0,0
