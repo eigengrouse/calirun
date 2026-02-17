@@ -24,7 +24,7 @@ IF ATTR(22, cy)=64 THEN POKE 23232+cy, 66
 LET s=s+v:PRINT #1;AT 1,27;BRIGHT 1;PAPER 1;INK 5;s
 REM magical sound shower
 IF m(n)>0 THEN BEEP 0.01,m(n)
-LET n=n+1:IF n>32 THEN LET n=1
+LET n=n+1 OR n=32 : REM cycles 1-32
 REM clear either side
 LET y=b+(b*8):LET z=22528+ry
 POKE z-1,y:POKE z+16,y

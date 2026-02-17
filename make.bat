@@ -1,3 +1,7 @@
+REM delete last output so we know if it's worked
+del calirun.tap
+del calirun.zxb
+
 REM convert machine code routines and UDGs into data statements
 cd src
 call routines.bat

@@ -11,8 +11,7 @@
 42 RANDOMIZE  USR 61440 :  NEXT x :  IF  ATTR  ( 22 , a )  = 64 THEN  POKE 23232 + a , 66
 50 LET s = s + v :  PRINT  # 1 ;  AT 1 , 27 ;  BRIGHT 1 ;  PAPER 1 ;  INK 5 ; s
 54 IF m ( n )  > 0 THEN  BEEP 0.01 , m ( n ) 
-56 LET n = n + 1 :  IF n > 32 THEN  LET n = 1
-60 LET y = b +  ( b * 8 )  :  LET z = 22528 + d :  POKE z - 1 , y :  POKE z + 16 , y :  PRINT  AT 0 , d + 1 ;  INK 0 ;  PAPER 0 ;  BRIGHT 1 ; "\udg(BBBBBBBBBBBBBB)" ;  :  LET y = 64 + p +  ( p * 8 )  :  POKE z , y :  POKE z + 15 , y
+56 LET n = n + 1 OR n = 32 :  LET y = b +  ( b * 8 )  :  LET z = 22528 + d :  POKE z - 1 , y :  POKE z + 16 , y :  PRINT  AT 0 , d + 1 ;  INK 0 ;  PAPER 0 ;  BRIGHT 1 ; "\udg(BBBBBBBBBBBBBB)" ;  :  LET y = 64 + p +  ( p * 8 )  :  POKE z , y :  POKE z + 15 , y
 74 FOR x = t ( u , 4 )  TO 10 STEP t ( u , 4 )  :  POKE z + x , y :  NEXT x :  IF t ( u , 3 )  > 0 AND p = 2 AND q = 4 THEN  POKE z + 32 + t ( u , 2 )  , t ( u , 3 )  + 64
 80 RANDOMIZE  USR 61440
 84 LET d = d + t ( u , 1 )  :  NEXT p :  NEXT q :  NEXT u :  GOSUB 92
