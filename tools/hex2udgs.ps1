@@ -27,7 +27,7 @@ foreach ($line in $lines) {
 
 # Output BASIC DATA statements
 Write-Output ("") #newline
-Write-Output ("# load user defined graphics")
+Write-Output ("REM load user defined graphics")
 Write-Output ("@loadudgs:")
 Write-Output ("RESTORE @udgs")
 Write-Output ("LET i=USR ""a"":LET z=i+8*" + ($bytes.Count/8) + "-1:FOR x=i TO z:READ y:POKE x,y:NEXT x")

@@ -48,7 +48,7 @@ foreach ($hexFile in $hexFiles) {
 $out = New-Object System.Collections.Generic.List[string]
 
 $out.Add("") # newline
-$out.Add("# machine code routines")
+$out.Add("REM machine code routines")
 $out.Add("@loadroutines:")
 $out.Add("RESTORE @routines")
 $out.Add("FOR x = 1 TO $($bytes.Count) : READ y : POKE x+61439, y : NEXT x")
@@ -63,7 +63,7 @@ $out.Add("@routines:")
 # split data statements by routines
 $groupSize = 16
 foreach ($r in $routineIndex) {
-    $out.Add("# " + $r.File)
+    $out.Add("REM " + $r.File)
     for ($i = $r.StartOffset; $i -lt ($r.StartOffset + $r.ByteCount); $i += $groupSize) {
         $end = [Math]::Min($i + $groupSize - 1,($r.StartOffset + $r.ByteCount) - 1)
         $group = $bytes[$i..$end]
