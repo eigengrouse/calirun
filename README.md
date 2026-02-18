@@ -4,4 +4,4 @@ An OutRun inspired racing game written in Sinclair BASIC with a machine code scr
 
 Uses [pasmo](https://pasmo.speccy.org/pasmodoc.html) and [zmakebas](https://github.com/z00m128/zmakebas). Also now [ZX-Basicus](https://jafma.net/software/zxbasicus/) for final optimisations.
 
-`make.bat` assembles the Z80 into Sinclair BASIC via pasmo and some powershell scripts and appends to `main.zxb` to create `build.zxp`, which is then built into a .tap file that can be used with a ZX Spectrum emulator. To build from powershell enter `& .\make.bat` from the root directory.
+`make.bat` assembles the Z80 into Sinclair BASIC via pasmo and some powershell scripts and appends to `main.zxb` to create `build.zxp`, which is then built into a `.tap` file. This is then optimised using ZX-Basicus to create the output files `calirun.tap` which is the game file that can be used with a ZX Spectrum emulator, and `calirun.zxb` which is the final optimised BASIC file. To build from powershell enter `& .\make.bat` from the root directory.

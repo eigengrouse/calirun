@@ -1,29 +1,12 @@
-REM delete last output so we know if it's worked
+REM delete previous build output files
 del calirun.tap
 del calirun.zxb
 
-REM convert machine code routines and UDGs into data statements
-cd src
-call routines.bat
+cd build
+
+REM convert machine code routines and UDGs into data statements to create interim BASIC file
+call asm.bat
+REM create optimised BASIC file and output .tap file
+call basic.bat
+
 cd ..
-
-REM append data statements to BASIC and build
-type .\src\main.zxb udgs.zxb routines.zxb > build.zxb
-.\tools\zmakebas -l -a @begin -o calirun.tap build.zxb
-
-REM convert the .tap file to .bas that can be optimised with zxbasicus
-.\tools\zxbasicus\zxbasicus -a -i calirun.tap
-del calirun_0.info
-del calirun_0.lst
-ren calirun_0.bas
-REM create optimiuse .bas file
-.\tools\zxbasicus\zxbasicus -t --alloptim -i calirun_0.bas -o calirun.zxb
-del calirun_0.bas
-REM create .tap file from .bas file
-del calirun.tap
-.\tools\zxbasicus\zxbasicus -s --line 10 --progname calirun -i calirun.zxb -o calirun.tap
-
-REM tidy up
-del udgs.zxb
-del routines.zxb
-del build.zxb
